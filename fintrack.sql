@@ -1,0 +1,166 @@
+
+-- =====================================================
+-- FINTRACK
+-- Script de Base de Datos
+-- Oracle Database XE
+-- Versión Académica
+-- =====================================================
+
+---
+
+## -- TABLA USUARIOS
+
+CREATE TABLE USR (
+USR_ID NUMBER GENERATED ALWAYS AS IDENTITY,
+USR_NOMBRE VARCHAR2(25) NOT NULL,
+USR_PSW VARCHAR2(18) NOT NULL,
+
+```
+CONSTRAINT PK_USR
+    PRIMARY KEY (USR_ID)
+```
+
+);
+
+---
+
+## -- TABLA LOG DE INICIO DE SESIÓN
+
+CREATE TABLE USR_LOGIN (
+ID_LOGIN NUMBER GENERATED ALWAYS AS IDENTITY,
+ID_USR_LOGIN NUMBER NOT NULL,
+FECHA_USR_LOGIN TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+```
+CONSTRAINT PK_USR_LOGIN
+    PRIMARY KEY (ID_LOGIN),
+
+CONSTRAINT FK_USR_LOGIN_USR
+    FOREIGN KEY (ID_USR_LOGIN)
+    REFERENCES USR (USR_ID)
+```
+
+);
+
+---
+
+## -- TABLA CUENTAS
+
+CREATE TABLE CUENTA (
+CTA_ID NUMBER GENERATED ALWAYS AS IDENTITY,
+CTA_NOMBRE VARCHAR2(100) NOT NULL,
+CTA_SALDO NUMBER(12,2) DEFAULT 0 NOT NULL,
+CTA_ESTADO CHAR(1) DEFAULT 'A' NOT NULL,
+USR_ID NUMBER NOT NULL,
+
+```
+CONSTRAINT PK_CUENTA
+    PRIMARY KEY (CTA_ID),
+
+CONSTRAINT FK_CUENTA_USR
+    FOREIGN KEY (USR_ID)
+    REFERENCES USR (USR_ID)
+```
+
+);
+
+---
+
+## -- TABLA GASTOS
+
+CREATE TABLE GASTO (
+GAS_ID NUMBER GENERATED ALWAYS AS IDENTITY,
+
+```
+GAS_DESCRIPCION VARCHAR2(150) NOT NULL,
+
+GAS_MONTO NUMBER(12,2) NOT NULL,
+
+GAS_CATEGORIA NUMBER NOT NULL,
+
+GAS_FECHA TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+GAS_OBSERVACION VARCHAR2(500),
+
+USR_ID NUMBER NOT NULL,
+
+GAS_CTA_ID NUMBER NOT NULL,
+
+CONSTRAINT PK_GASTO
+    PRIMARY KEY (GAS_ID),
+
+CONSTRAINT FK_GASTO_USR
+    FOREIGN KEY (USR_ID)
+    REFERENCES USR (USR_ID),
+
+CONSTRAINT FK_GASTO_CUENTA
+    FOREIGN KEY (GAS_CTA_ID)
+    REFERENCES CUENTA (CTA_ID)
+```
+
+);
+
+---
+
+## -- DATOS DE PRUEBA
+
+INSERT INTO USR (
+USR_NOMBRE,
+USR_PSW
+)
+VALUES (
+'admin',
+'admin'
+);
+
+COMMIT;
+
+---
+
+## -- CUENTA DE EJEMPLO
+
+INSERT INTO CUENTA (
+CTA_NOMBRE,
+CTA_SALDO,
+CTA_ESTADO,
+USR_ID
+)
+VALUES (
+'Ahorros Bancolombia',
+0,
+'A',
+1
+);
+
+COMMIT;
+
+---
+
+## -- CONSULTAS DE VALIDACIÓN
+
+SELECT * FROM USR;
+
+SELECT * FROM USR_LOGIN;
+
+SELECT * FROM CUENTA;
+
+SELECT * FROM GASTO;
+
+---
+
+## -- NOTAS DEL PROYECTO
+
+-- Funcionalidades implementadas:
+-- 1. Inicio de sesión.
+-- 2. Registro de sesiones.
+-- 3. Gestión de gastos.
+-- 4. Asociación de gastos a usuarios.
+-- 5. Asociación de gastos a cuentas.
+-- 6. Persistencia en Oracle Database.
+
+-- Funcionalidades en desarrollo:
+-- 1. Categorías parametrizadas.
+-- 2. Gestión de ingresos.
+-- 3. Dashboard financiero.
+-- 4. Exportación a Excel.
+-- 5. Reportes financieros.
